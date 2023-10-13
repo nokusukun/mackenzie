@@ -1,4 +1,4 @@
-# Mackenzie - Generic Caching Library in Go
+# Mackenzie - Generic Function Caching Library in Go
 
 Mackenzie is a lightweight, highly flexible caching library for Go applications, leveraging the power of generics and reflection to offer enhanced caching capabilities.
 
