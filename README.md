@@ -18,8 +18,6 @@ Mackenzie is a lightweight, highly flexible caching library for Go applications,
 go get github.com/nokusukun/mackenzie
 ```
 
-(Replace `username` with the actual GitHub username.)
-
 ## Usage
 
 ### 1. Creating a Cache
