@@ -172,13 +172,13 @@ func (c *Cache[T]) ClearExpired() {
 	}
 }
 
-func (c *Cache[T]) Clear() {
+func (c *Cache[T]) InvalidateAll() {
 	c.lock.Lock()
 	c.store = make(map[string]*cacheItem[T])
 	c.lock.Unlock()
 }
 
-func (c *Cache[T]) ClearKey(in ...any) {
+func (c *Cache[T]) Invalidate(in ...any) {
 	key := c.getKey(in)
 	c.lock.Lock()
 	delete(c.store, key)
@@ -186,7 +186,7 @@ func (c *Cache[T]) ClearKey(in ...any) {
 }
 
 func (c *Cache[T]) ForceGet(in ...any) (T, error) {
-	c.ClearKey(in...)
+	c.Invalidate(in...)
 	return c.Get(in...)
 }
 

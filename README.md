@@ -18,6 +18,63 @@ Mackenzie is a lightweight, highly flexible caching library for Go applications,
 go get github.com/nokusukun/mackenzie
 ```
 
+## Full example
+This example caches http calls for one second. The first call takes 570ms, the second call takes >1ms.
+```go
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"github.com/nokusukun/mackenzie"
+	"net/http"
+	"time"
+)
+
+func HTTPGetJson(url string) (map[string]any, error) {
+	client := http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := client.Do(req)
+	r := map[string]any{}
+	err = json.NewDecoder(resp.Body).Decode(&r)
+	if err != nil {
+		return nil, err
+	}
+	return r, nil
+}
+
+func main() {
+	url := "https://dummyjson.com/products/1"
+	CGetJson, err := mackenzie.Create[map[string]any](HTTPGetJson, mackenzie.Config{Lifetime: 1 * time.Second})
+	if err != nil {
+		panic(err)
+	}
+
+	start := time.Now()
+	data, _ := CGetJson.Get(url)
+	elapsed := time.Since(start)
+	fmt.Println("Data", data)
+	fmt.Println("First call took", elapsed.String())
+
+	start = time.Now()
+	data, _ = CGetJson.Get(url)
+	elapsed = time.Since(start)
+	fmt.Println("Data", data)
+	fmt.Println("Second call took", elapsed.String())
+}
+
+----
+$ go run examples/http
+Data map[brand:Apple category:smartphones...
+First call took 570.5082ms
+Data map[brand:Apple category:smartphones...
+Second call took 0s
+
+```
+
 ## Usage
 
 ### 1. Creating a Cache
