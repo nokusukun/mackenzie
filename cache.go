@@ -30,9 +30,9 @@ type Config struct {
 	CleanInterval time.Duration
 }
 
-func Create[T any](caller any, cfg ...Config) (*Cache[T], error) {
+func Create[T any](wrappedFunc any, cfg ...Config) (*Cache[T], error) {
 	tType := reflect.ValueOf(new(T)).Elem().Type()
-	callerVal := reflect.ValueOf(caller)
+	callerVal := reflect.ValueOf(wrappedFunc)
 	if callerVal.Type().Kind() != reflect.Func {
 		return nil, ErrCallerMustBeFunction
 	}
@@ -48,7 +48,7 @@ func Create[T any](caller any, cfg ...Config) (*Cache[T], error) {
 	}
 	// check if the first return value is equal to T
 	if callerVal.Type().Out(0) != tType {
-		return nil, ErrCallerMustReturnTAsItsFirstMethod
+		return nil, ErrCallerMustReturnTAsItsFirstMethod(tType.Name())
 	}
 	returnsError := false
 	if callerVal.Type().NumOut() == 2 {
